@@ -17,14 +17,14 @@ class ComponentAdapter : RecyclerView.Adapter<Component>() {
 
     var data: List<Any>? = null
 
-    private val adapterDelegates: MutableList<AdapterDelegate> = mutableListOf()
-    private val delegateViewTypeMapper: MutableMap<Int, AdapterDelegate?> = mutableMapOf()
+    private val adapterDelegates: MutableList<AdapterDelegate<*,*>> = mutableListOf()
+    private val delegateViewTypeMapper: MutableMap<Int, AdapterDelegate<*,*>?> = mutableMapOf()
 
-    fun registerAdapterDelegate(adapterDelegate: AdapterDelegate) {
+    fun registerAdapterDelegate(adapterDelegate: AdapterDelegate<*,*>) {
         adapterDelegates.add(adapterDelegate)
     }
 
-    fun unRegisterAdapterDelegate(adapterDelegate: AdapterDelegate) {
+    fun unRegisterAdapterDelegate(adapterDelegate: AdapterDelegate<*,*>) {
         adapterDelegates.remove(adapterDelegate)
     }
 

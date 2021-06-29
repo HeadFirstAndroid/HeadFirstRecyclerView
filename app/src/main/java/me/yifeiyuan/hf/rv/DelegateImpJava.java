@@ -16,18 +16,7 @@ import me.yifeiyuan.hf.rv.ultra.AdapterDelegate;
 /**
  * Created by 程序亦非猿 on 2021/6/8.
  */
-class DelegateImpJava implements AdapterDelegate {
-
-    @NotNull
-    @Override
-    public Component onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
-        return null;
-    }
-
-    @Override
-    public void onBindViewHolder(@NotNull Component holder, int position, @NotNull List<Object> payloads, @Nullable Object model, @NotNull ComponentAdapter adapter) {
-
-    }
+class DelegateImpJava<T,VH extends Component> implements AdapterDelegate<T,VH> {
 
     @Override
     public long getItemId(@NotNull Object model, int position) {
@@ -66,6 +55,17 @@ class DelegateImpJava implements AdapterDelegate {
 
     @Override
     public void onViewRecycled(@NotNull Component component, @NotNull ComponentAdapter adapter) {
+
+    }
+
+    @NotNull
+    @Override
+    public VH onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(@NotNull VH holder, int position, @NotNull List<Object> payloads, @Nullable T model, @NotNull ComponentAdapter adapter) {
 
     }
 }

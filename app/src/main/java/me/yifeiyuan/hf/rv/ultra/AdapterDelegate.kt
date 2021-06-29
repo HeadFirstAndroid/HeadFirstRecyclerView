@@ -7,25 +7,25 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * Created by 程序亦非猿 on 2021/6/8.
  */
-interface AdapterDelegate {
+interface AdapterDelegate<T,VH :Component> {
 
     companion object {
         private const val TAG = "IAdapterDelegate"
     }
 
-    fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Component
+    fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
 
     fun onBindViewHolder(
-        holder: Component,
+        holder: VH,
         position: Int,
         payloads: MutableList<Any>,
-        model: Any?,
+        model: T?,
         adapter: ComponentAdapter
     ) {
         holder.bind(model, position, payloads, adapter)
     }
 
-    fun onViewRecycled(component: Component, adapter: ComponentAdapter){
+    fun onViewRecycled(component: VH, adapter: ComponentAdapter){
         component.onViewRecycled(adapter)
     }
 
@@ -33,15 +33,15 @@ interface AdapterDelegate {
 
     fun getItemViewType(model: Any, position: Int): Int
 
-    fun onViewAttachedToWindow(component: Component, adapter: ComponentAdapter) {
+    fun onViewAttachedToWindow(component: VH, adapter: ComponentAdapter) {
         component.onViewAttachedToWindow(adapter)
     }
 
-    fun onViewDetachedFromWindow(component: Component, adapter: ComponentAdapter) {
+    fun onViewDetachedFromWindow(component: VH, adapter: ComponentAdapter) {
         component.onViewDetachedFromWindow(adapter)
     }
 
-    fun onFailedToRecycleView(component: Component, adapter: ComponentAdapter): Boolean {
+    fun onFailedToRecycleView(component: VH, adapter: ComponentAdapter): Boolean {
         return component.onFailedToRecycleView(adapter)
     }
 

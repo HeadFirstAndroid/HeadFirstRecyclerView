@@ -12,13 +12,16 @@ class UltraActivity : AppCompatActivity() {
 
         ComponentAdapter().apply {
 
-            registerAdapterDelegate(object:AdapterDelegate{
-                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Component {
-                    TODO("Not yet implemented")
+            registerAdapterDelegate(object : AdapterDelegate<DefaultModel, DefaultComponent> {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int
+                ): DefaultComponent {
+                    TODO()
                 }
 
-                override fun getItemViewType(model: Any, position: Int): Int {
-                    TODO("Not yet implemented")
+                override fun getItemViewType(model: DefaultModel, position: Int): Int {
+                    TODO()
                 }
             })
         }
