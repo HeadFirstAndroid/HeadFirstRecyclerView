@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * Created by 程序亦非猿 on 2021/6/8.
  */
-class ComponentAdapter : RecyclerView.Adapter<Component>() {
+class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     companion object {
         private const val TAG = "ComponentAdapter"
@@ -28,9 +28,9 @@ class ComponentAdapter : RecyclerView.Adapter<Component>() {
         adapterDelegates.remove(adapterDelegate)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Component {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Component<*> {
         val localDelegate = delegateViewTypeMapper[viewType]
-        var component: Component? = null
+        var component: Component<*>? = null
         if (localDelegate != null) {
             component = localDelegate.onCreateViewHolder(parent, viewType)
         }
@@ -51,11 +51,11 @@ class ComponentAdapter : RecyclerView.Adapter<Component>() {
         return data!!.size
     }
 
-    override fun onBindViewHolder(holder: Component, position: Int) {
+    override fun onBindViewHolder(holder: Component<*>, position: Int) {
         holder.bind(getItemData(position), position, mutableListOf(), this)
     }
 
-    override fun onBindViewHolder(holder: Component, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(holder: Component<*>, position: Int, payloads: MutableList<Any>) {
         holder.bind(getItemData(position), position, payloads, this)
     }
 
@@ -81,10 +81,6 @@ class ComponentAdapter : RecyclerView.Adapter<Component>() {
         return itemViewType
     }
 
-    override fun setHasStableIds(hasStableIds: Boolean) {
-        super.setHasStableIds(hasStableIds)
-    }
-
     override fun getItemId(position: Int): Long {
         var itemId = RecyclerView.NO_ID
         adapterDelegates.forEach {
@@ -100,32 +96,24 @@ class ComponentAdapter : RecyclerView.Adapter<Component>() {
         return itemId
     }
 
-    override fun onViewRecycled(holder: Component) {
+    override fun onViewRecycled(holder: Component<*>) {
         holder.onViewRecycled(this)
         Log.d(TAG, "onViewRecycled() called with: holder = $holder")
     }
 
-    override fun onFailedToRecycleView(holder: Component): Boolean {
+    override fun onFailedToRecycleView(holder: Component<*>): Boolean {
         Log.d(TAG, "onFailedToRecycleView() called with: holder = $holder")
         return holder.onFailedToRecycleView(this)
     }
 
-    override fun onViewAttachedToWindow(holder: Component) {
+    override fun onViewAttachedToWindow(holder: Component<*>) {
         holder.onViewAttachedToWindow(this)
         Log.d(TAG, "onViewAttachedToWindow() called with: holder = $holder")
     }
 
-    override fun onViewDetachedFromWindow(holder: Component) {
+    override fun onViewDetachedFromWindow(holder: Component<*>) {
         holder.onViewDetachedFromWindow(this)
         Log.d(TAG, "onViewDetachedFromWindow() called with: holder = $holder")
-    }
-
-    override fun registerAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
-        super.registerAdapterDataObserver(observer)
-    }
-
-    override fun unregisterAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
-        super.unregisterAdapterDataObserver(observer)
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -138,4 +126,27 @@ class ComponentAdapter : RecyclerView.Adapter<Component>() {
         Log.d(TAG, "onDetachedFromRecyclerView() called with: recyclerView = $recyclerView")
     }
 
+    override fun findRelativeAdapterPositionIn(
+        adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>,
+        viewHolder: RecyclerView.ViewHolder,
+        localPosition: Int
+    ): Int {
+        return super.findRelativeAdapterPositionIn(adapter, viewHolder, localPosition)
+    }
+
+    override fun setStateRestorationPolicy(strategy: StateRestorationPolicy) {
+        super.setStateRestorationPolicy(strategy)
+    }
+
+    override fun setHasStableIds(hasStableIds: Boolean) {
+        super.setHasStableIds(hasStableIds)
+    }
+
+    override fun registerAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
+        super.registerAdapterDataObserver(observer)
+    }
+
+    override fun unregisterAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
+        super.unregisterAdapterDataObserver(observer)
+    }
 }
