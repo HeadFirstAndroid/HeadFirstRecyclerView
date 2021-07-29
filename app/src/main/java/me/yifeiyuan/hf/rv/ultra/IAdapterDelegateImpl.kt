@@ -2,9 +2,9 @@ package me.yifeiyuan.hf.rv.ultra
 
 import android.view.ViewGroup
 
-class IAdapterDelegateImpl<T,VH :Component<T>> : AdapterDelegate<T,VH> {
+class IAdapterDelegateImpl  : AdapterDelegate<DefaultModel,DefaultComponent> {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DefaultComponent {
         TODO("Not yet implemented")
     }
 

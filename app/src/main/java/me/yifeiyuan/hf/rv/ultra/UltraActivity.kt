@@ -23,6 +23,10 @@ class UltraActivity : AppCompatActivity() {
                 override fun getItemViewType(model: Any, position: Int): Int {
                     TODO("Not yet implemented")
                 }
+
+                override fun isDelegatedTo(model: Any?): Boolean {
+                    TODO("Not yet implemented")
+                }
             })
         }
     }
