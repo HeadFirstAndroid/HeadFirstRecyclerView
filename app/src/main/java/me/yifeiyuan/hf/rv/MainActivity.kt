@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
+import me.yifeiyuan.hf.rv.ultra.ComponentAdapter
 import me.yifeiyuan.hf.rv.ultra.DefaultModel
 import me.yifeiyuan.hf.rv.ultra.DefaultModel2
 import me.yifeiyuan.hf.rv.ultra.IAdapterDelegateImpl
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     lateinit var recyclerView: RecyclerView
-    lateinit var adapter: HFAdapter
+    lateinit var adapter: ComponentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +31,10 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
 
-        adapter = HFAdapter()
+        adapter = ComponentAdapter().apply {
+            updateData(mockData())
+            registerAdapterDelegate(ShowcaseAdapterDelegate())
+        }
         recyclerView.adapter = adapter
         recyclerView.itemAnimator = HFAnimator()
 
@@ -41,6 +45,14 @@ class MainActivity : AppCompatActivity() {
             Log.e(TAG, "onCreate:DefaultModel: ${isDelegatedTo(DefaultModel())}")
             Log.e(TAG, "onCreate:Any: ${isDelegatedTo(Any())}")
             Log.e(TAG, "onCreate:DefaultModel2: ${isDelegatedTo(DefaultModel2())}")
+        }
+    }
+
+    private fun mockData(): List<Any> {
+        return mutableListOf<Any>().apply{
+            repeat(30){
+                add(ShowcaseModel())
+            }
         }
     }
 

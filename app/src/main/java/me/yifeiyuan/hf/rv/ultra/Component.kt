@@ -2,12 +2,16 @@ package me.yifeiyuan.hf.rv.ultra
 
 import android.content.Context
 import android.view.View
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Created by 程序亦非猿 on 2021/6/8.
  */
-abstract class Component<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+abstract class Component<T>(itemView: View) : RecyclerView.ViewHolder(itemView), LifecycleObserver {
 
     companion object {
         private const val TAG = "Component"
@@ -15,7 +19,9 @@ abstract class Component<T>(itemView: View) : RecyclerView.ViewHolder(itemView) 
 
     var context: Context = itemView.context
 
-    fun bind(model: Any?, position: Int, payloads: MutableList<Any>, adapter: ComponentAdapter) {
+    private var isVisible = false
+
+    fun bind(model: Any, position: Int, payloads: MutableList<Any>, adapter: ComponentAdapter) {
         if (payloads.isEmpty()) {
             onBind(model as T, position, adapter)
         } else {
@@ -42,6 +48,34 @@ abstract class Component<T>(itemView: View) : RecyclerView.ViewHolder(itemView) 
     fun onFailedToRecycleView(adapter: ComponentAdapter): Boolean = false
 
     fun requestReRender(adapter: ComponentAdapter) {
-        adapter.notifyItemChanged(adapterPosition)
+        adapter.notifyItemChanged(position)
     }
+
+    protected open fun onVisibilityChanged(visible: Boolean, adapter: ComponentAdapter) {
+        isVisible = visible
+    }
+
+    open fun isVisible(): Boolean {
+        return isVisible
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    open fun onResume() {
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    open fun onPause() {
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    open fun onStop() {
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    open fun onDestroy() {
+        if (context is LifecycleOwner) {
+            (context as LifecycleOwner).lifecycle.removeObserver(this)
+        }
+    }
+
 }

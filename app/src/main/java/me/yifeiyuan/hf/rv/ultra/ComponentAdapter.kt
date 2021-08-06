@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * Created by 程序亦非猿 on 2021/6/8.
  */
-class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
+open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     companion object {
         private const val TAG = "ComponentAdapter"
@@ -15,7 +15,7 @@ class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     val ultra: Ultra = Ultra
 
-    var data: List<Any>? = null
+    private var data: List<Any>? = null
 
     private val adapterDelegates: MutableList<AdapterDelegate<*, *>> = mutableListOf()
     private val delegateViewTypeMapper: MutableMap<Int, AdapterDelegate<*, *>?> = mutableMapOf()
@@ -26,6 +26,11 @@ class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     fun unRegisterAdapterDelegate(adapterDelegate: AdapterDelegate<*, *>) {
         adapterDelegates.remove(adapterDelegate)
+    }
+
+   open fun updateData(list: List<Any>) {
+        data = list
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Component<*> {
@@ -40,10 +45,6 @@ class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
         return component
     }
 
-    fun submitData(newData: List<Any>?) {
-
-    }
-
     override fun getItemCount(): Int {
         return data?.size ?: 0
     }
@@ -56,39 +57,44 @@ class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
         holder.bind(getItemData(position), position, payloads, this)
     }
 
-    private fun getItemData(position: Int): Any {
+    open fun getItemData(position: Int): Any {
         return data!![position]
     }
 
     override fun getItemViewType(position: Int): Int {
         var itemViewType = 0
+        val itemData = getItemData(position)
         adapterDelegates.forEach {
-            val type = it.getItemViewType(getItemData(position), position)
-            if (type > 0) {
-                itemViewType = type
-                delegateViewTypeMapper[type] = it
-                return@forEach
+            if (it.isDelegatedTo(itemData)) {
+                val type = it.getItemViewType(itemData, position)
+                if (type != 0) {
+                    itemViewType = type
+                    delegateViewTypeMapper[type] = it
+                    return@forEach
+                }
             }
         }
 
-        if (itemViewType <= 0) {
-            itemViewType = ultra.getItemViewType(getItemData(position), position)
+        if (itemViewType == 0) {
+            itemViewType = ultra.getItemViewType(itemData, position)
         }
-
         return itemViewType
     }
 
     override fun getItemId(position: Int): Long {
         var itemId = RecyclerView.NO_ID
+        val itemData = getItemData(position)
         adapterDelegates.forEach {
-            val id = it.getItemId(getItemData(position), position)
-            if (id >= 0) {
-                itemId = id
-                return@forEach
+            if (it.isDelegatedTo(itemData)) {
+                val id = it.getItemId(itemData, position)
+                if (id >= 0) {
+                    itemId = id
+                    return@forEach
+                }
             }
         }
         if (itemId == RecyclerView.NO_ID) {
-            itemId = ultra.getItemId(getItemData(position), position)
+            itemId = ultra.getItemId(itemData, position)
         }
         return itemId
     }

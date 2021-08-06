@@ -1,6 +1,5 @@
 package me.yifeiyuan.hf.rv.ultra
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.reflect.ParameterizedType
@@ -41,7 +40,7 @@ interface AdapterDelegate<T, VH : Component<T>> {
 
     fun getItemId(model: Any, position: Int): Long = RecyclerView.NO_ID
 
-    fun getItemViewType(model: Any, position: Int): Int
+    fun getItemViewType(model: Any, position: Int):Int
 //
 //    fun onViewAttachedToWindow(component: VH, adapter: ComponentAdapter) {
 //        component.onViewAttachedToWindow(adapter)
