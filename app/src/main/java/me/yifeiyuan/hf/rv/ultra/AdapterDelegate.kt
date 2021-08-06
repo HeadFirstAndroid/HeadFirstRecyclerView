@@ -10,7 +10,7 @@ import java.lang.reflect.ParameterizedType
 interface AdapterDelegate<T, VH : Component<T>> {
 
     companion object {
-        private const val TAG = "IAdapterDelegate"
+        private const val TAG = "AdapterDelegate"
     }
 
     fun isDelegatedTo(model: Any?): Boolean {
