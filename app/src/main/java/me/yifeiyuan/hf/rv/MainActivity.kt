@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        })
 
-        val k = DefaultDelegateImpJava()
+        val k = AdapterDelegateJava()
         k.javaClass.genericSuperclass
 
         IAdapterDelegateImpl().run {

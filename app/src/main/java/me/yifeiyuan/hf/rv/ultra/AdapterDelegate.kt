@@ -26,5 +26,15 @@ interface AdapterDelegate<T, VH : Component<T>> {
 
     fun getItemId(model: Any, position: Int): Long = RecyclerView.NO_ID
 
-    fun getItemViewType(model: Any, position: Int):Int
+    fun getItemViewType(model: Any, position: Int): Int
+
+    fun onBindViewHolder(
+        holder: Component<*>,
+        itemData: Any,
+        position: Int,
+        payloads: MutableList<Any>,
+        adapter: ComponentAdapter
+    ) {
+        holder.bind(itemData, position, mutableListOf(), adapter)
+    }
 }

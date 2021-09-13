@@ -18,7 +18,7 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     private var data: List<Any>? = null
 
     private val adapterDelegates: MutableList<AdapterDelegate<*, *>> = mutableListOf()
-    private val delegateViewTypeMapper: MutableMap<Int, AdapterDelegate<*, *>?> = mutableMapOf()
+    private val viewTypeDelegateMapper: MutableMap<Int, AdapterDelegate<*, *>?> = mutableMapOf()
 
     fun registerAdapterDelegate(adapterDelegate: AdapterDelegate<*, *>) {
         adapterDelegates.add(adapterDelegate)
@@ -28,16 +28,16 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
         adapterDelegates.remove(adapterDelegate)
     }
 
-   open fun updateData(list: List<Any>) {
+    open fun updateData(list: List<Any>) {
         data = list
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Component<*> {
-        val localDelegate = delegateViewTypeMapper[viewType]
+        val delegate = viewTypeDelegateMapper[viewType]
         var component: Component<*>? = null
-        if (localDelegate != null) {
-            component = localDelegate.onCreateViewHolder(parent, viewType)
+        if (delegate != null) {
+            component = delegate.onCreateViewHolder(parent, viewType)
         }
         if (component == null) {
             component = ultra.onCreateViewHolder(parent, viewType)
@@ -49,12 +49,24 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
         return data?.size ?: 0
     }
 
-    override fun onBindViewHolder(holder: Component<*>, position: Int) {
-        holder.bind(getItemData(position), position, mutableListOf(), this)
+    override fun onBindViewHolder(component: Component<*>, position: Int) {
+        getDelegateByComponent(component).onBindViewHolder(
+            component,
+            getItemData(position),
+            position,
+            mutableListOf(),
+            this
+        )
     }
 
-    override fun onBindViewHolder(holder: Component<*>, position: Int, payloads: MutableList<Any>) {
-        holder.bind(getItemData(position), position, payloads, this)
+    override fun onBindViewHolder(component: Component<*>, position: Int, payloads: MutableList<Any>) {
+        getDelegateByComponent(component).onBindViewHolder(
+            component,
+            getItemData(position),
+            position,
+            payloads,
+            this
+        )
     }
 
     open fun getItemData(position: Int): Any {
@@ -69,7 +81,7 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
                 val type = it.getItemViewType(itemData, position)
                 if (type != 0) {
                     itemViewType = type
-                    delegateViewTypeMapper[type] = it
+                    viewTypeDelegateMapper[type] = it
                     return@forEach
                 }
             }
@@ -79,6 +91,19 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
             itemViewType = ultra.getItemViewType(itemData, position)
         }
         return itemViewType
+    }
+
+    fun getDelegateByData(itemData: Any): AdapterDelegate<*, *> {
+        adapterDelegates.forEach {
+            if (it.isDelegatedTo(itemData)) {
+                return it
+            }
+        }
+        throw DelegateNotFoundException(itemData)
+    }
+
+    fun getDelegateByComponent(component: Component<*>): AdapterDelegate<*, *> {
+        return viewTypeDelegateMapper[component.itemViewType]!!
     }
 
     override fun getItemId(position: Int): Long {

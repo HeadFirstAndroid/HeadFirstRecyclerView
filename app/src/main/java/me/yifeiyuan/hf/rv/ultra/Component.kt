@@ -21,7 +21,7 @@ abstract class Component<T>(itemView: View) : RecyclerView.ViewHolder(itemView),
 
     private var isVisible = false
 
-    fun bind(model: Any, position: Int, payloads: MutableList<Any>, adapter: ComponentAdapter) {
+    internal fun bind(model: Any, position: Int, payloads: MutableList<Any>, adapter: ComponentAdapter) {
         if (payloads.isEmpty()) {
             onBind(model as T, position, adapter)
         } else {
@@ -29,7 +29,7 @@ abstract class Component<T>(itemView: View) : RecyclerView.ViewHolder(itemView),
         }
     }
 
-    abstract fun onBind(model: T, position: Int, adapter: ComponentAdapter)
+    internal abstract fun onBind(model: T, position: Int, adapter: ComponentAdapter)
 
     open fun onBind(
         model: Any?,
