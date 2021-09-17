@@ -8,10 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
-import me.yifeiyuan.hf.rv.ultra.ComponentAdapter
-import me.yifeiyuan.hf.rv.ultra.DefaultModel
-import me.yifeiyuan.hf.rv.ultra.DefaultModel2
-import me.yifeiyuan.hf.rv.ultra.IAdapterDelegateImpl
+import me.yifeiyuan.hf.rv.ultra.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
 
         adapter = ComponentAdapter().apply {
-            updateData(mockData())
+            setData(mockData())
             registerAdapterDelegate(ShowcaseAdapterDelegate())
         }
         recyclerView.adapter = adapter
@@ -46,17 +43,21 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        })
 
-        val k = AdapterDelegateJava()
-        k.javaClass.genericSuperclass
+//        val k = object : AdapterDelegateJava(){
+//            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DefaultComponent {
+//                return DefaultComponent()
+//            }
+//        }
+//        k.javaClass.genericSuperclass
 
         IAdapterDelegateImpl().run {
-            Log.e(TAG, "onCreate:DefaultModel: ${isDelegatedTo(DefaultModel())}")
-            Log.e(TAG, "onCreate:Any: ${isDelegatedTo(Any())}")
-            Log.e(TAG, "onCreate:DefaultModel2: ${isDelegatedTo(DefaultModel2())}")
+            Log.e(TAG, "onCreate:DefaultModel: ${delegate(DefaultModel())}")
+            Log.e(TAG, "onCreate:Any: ${delegate(Any())}")
+            Log.e(TAG, "onCreate:DefaultModel2: ${delegate(DefaultModel2())}")
         }
     }
 
-    private fun mockData(): List<Any> {
+    private fun mockData(): MutableList<Any> {
         return mutableListOf<Any>().apply{
             repeat(30){
                 add(ShowcaseModel())

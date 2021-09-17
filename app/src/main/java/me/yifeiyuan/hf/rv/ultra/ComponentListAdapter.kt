@@ -44,7 +44,7 @@ class ComponentListAdapter<T : ComponentDataModel> : ComponentAdapter() {
         }
     }
 
-    override fun updateData(list: List<Any>) {
+    override fun setData(list: MutableList<Any>) {
         throw UnsupportedOperationException("Use submitList(newList) instead!")
     }
 

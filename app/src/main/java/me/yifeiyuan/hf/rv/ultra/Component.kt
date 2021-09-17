@@ -21,6 +21,7 @@ abstract class Component<T>(itemView: View) : RecyclerView.ViewHolder(itemView),
 
     private var isVisible = false
 
+    @Suppress("UNCHECKED_CAST")
     internal fun bind(model: Any, position: Int, payloads: MutableList<Any>, adapter: ComponentAdapter) {
         if (payloads.isEmpty()) {
             onBind(model as T, position, adapter)
@@ -32,7 +33,7 @@ abstract class Component<T>(itemView: View) : RecyclerView.ViewHolder(itemView),
     internal abstract fun onBind(model: T, position: Int, adapter: ComponentAdapter)
 
     open fun onBind(
-        model: Any?,
+        model: T,
         position: Int,
         payloads: MutableList<Any>,
         adapter: ComponentAdapter
@@ -47,8 +48,8 @@ abstract class Component<T>(itemView: View) : RecyclerView.ViewHolder(itemView),
 
     fun onFailedToRecycleView(adapter: ComponentAdapter): Boolean = false
 
-    fun requestReRender(adapter: ComponentAdapter) {
-        adapter.notifyItemChanged(position)
+    fun requestReRender() {
+        this.bindingAdapter?.notifyItemChanged(position)
     }
 
     protected open fun onVisibilityChanged(visible: Boolean, adapter: ComponentAdapter) {

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ViewGroup
 import me.yifeiyuan.hf.rv.R
+import me.yifeiyuan.hf.rv.ultra.ComponentAdapter.Companion.registerGlobalAdapterDelegate
 
 class UltraActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,20 +13,12 @@ class UltraActivity : AppCompatActivity() {
 
         ComponentAdapter().apply {
 
-            registerAdapterDelegate(object : AdapterDelegate<DefaultModel, DefaultComponent> {
+            registerAdapterDelegate(object : AdapterDelegate<Any, DefaultComponent> {
                 override fun onCreateViewHolder(
                     parent: ViewGroup,
                     viewType: Int
                 ): DefaultComponent {
                     TODO()
-                }
-
-                override fun getItemViewType(model: Any, position: Int): Int {
-                    TODO("Not yet implemented")
-                }
-
-                override fun isDelegatedTo(model: Any?): Boolean {
-                    TODO("Not yet implemented")
                 }
             })
         }

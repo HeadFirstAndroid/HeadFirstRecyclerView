@@ -14,25 +14,13 @@ import me.yifeiyuan.hf.rv.ultra.DefaultModel
  */
 class HFAdapter : ComponentAdapter() {
 
+    private val showcaseAdapterDelegate = ShowcaseAdapterDelegate()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowcaseComponent {
-        return ShowcaseComponent.newInstance(LayoutInflater.from(parent.context).inflate(R.layout.simple_item,parent,false))
+        return showcaseAdapterDelegate.onCreateViewHolder(parent, viewType)
     }
 
     override fun getItemCount(): Int {
         return 20
-    }
-
-    class ShowcaseComponent(view: View) : Component<ShowcaseModel>(view){
-        companion object{
-            fun newInstance(view: View): ShowcaseComponent{
-                return ShowcaseComponent(view)
-            }
-        }
-
-        override fun onBind(model: ShowcaseModel, position: Int, adapter: ComponentAdapter) {
-            itemView.setOnClickListener {
-                Toast.makeText(context,"onBind Clicks",Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }

@@ -1,5 +1,6 @@
 package me.yifeiyuan.hf.rv.ultra
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
@@ -9,7 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 object Ultra {
 
     private val adapterDelegates: MutableList<AdapterDelegate<*, *>> = mutableListOf()
-    private val delegateViewTypeMapper: MutableMap<Int, AdapterDelegate<*, *>?> = mutableMapOf()
+    private val viewTypeDelegateMapper: MutableMap<Int, AdapterDelegate<*, *>?> = mutableMapOf()
+
+    private val hooks: MutableList<AdapterHook> = mutableListOf<AdapterHook>().apply{
+        add(AdapterDelegateApm())
+    }
 
     fun registerAdapterDelegate(adapterDelegate: AdapterDelegate<*, *>) {
         adapterDelegates.add(adapterDelegate)
@@ -20,7 +25,7 @@ object Ultra {
     }
 
     fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Component<*> {
-        val localDelegate = delegateViewTypeMapper[viewType]
+        val localDelegate = viewTypeDelegateMapper[viewType]
         var component: Component<*>? = null
         if (localDelegate != null) {
             component = localDelegate.onCreateViewHolder(parent, viewType)
@@ -34,12 +39,16 @@ object Ultra {
     fun getItemViewType(itemData: Any, position: Int): Int {
         var itemViewType = 0
         adapterDelegates.forEach {
-            if (it.isDelegatedTo(itemData)) {
+            if (it.delegate(itemData)) {
                 val type = it.getItemViewType(itemData, position)
-                if (type > 0) {
+                if (type != 0) {
                     itemViewType = type
-                    delegateViewTypeMapper[type] = it
-                    return@forEach
+                    viewTypeDelegateMapper[type] = it
+                    return itemViewType
+                } else {
+                    itemViewType = View.generateViewId()
+                    viewTypeDelegateMapper[type] = it
+                    return itemViewType
                 }
             }
         }
@@ -49,7 +58,7 @@ object Ultra {
     fun getItemId(itemData: Any, position: Int): Long {
         var itemId = RecyclerView.NO_ID
         adapterDelegates.forEach {
-            if (it.isDelegatedTo(itemData)) {
+            if (it.delegate(itemData)) {
                 val id = it.getItemId(itemData, position)
                 if (id >= 0) {
                     itemId = id
@@ -58,6 +67,19 @@ object Ultra {
             }
         }
         return itemId
+    }
+
+    fun getDelegateByViewType(viewType: Int) :AdapterDelegate<*,*>?{
+        return viewTypeDelegateMapper[viewType]
+    }
+
+    fun getDelegateByItemData(itemData: Any): AdapterDelegate<*, *>? {
+        adapterDelegates.forEach {
+            if (it.delegate(itemData)) {
+                return it
+            }
+        }
+        return null
     }
 
 }

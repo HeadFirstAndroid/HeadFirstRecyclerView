@@ -13,7 +13,11 @@ interface AdapterDelegate<T, VH : Component<T>> {
         private const val TAG = "AdapterDelegate"
     }
 
-    fun isDelegatedTo(model: Any?): Boolean {
+    /**
+     * @param model
+     * @return 是否代理该 model
+     */
+    fun delegate(model: Any?): Boolean {
         if (model != null) {
             val type =
                 (this.javaClass.genericInterfaces[0] as ParameterizedType).actualTypeArguments[0]
@@ -26,15 +30,17 @@ interface AdapterDelegate<T, VH : Component<T>> {
 
     fun getItemId(model: Any, position: Int): Long = RecyclerView.NO_ID
 
-    fun getItemViewType(model: Any, position: Int): Int
+    fun getItemViewType(model: Any, position: Int): Int = 0
+
+//    fun itemViewTypeAsLayoutResId() = true
 
     fun onBindViewHolder(
-        holder: Component<*>,
-        itemData: Any,
+        component: Component<*>,
+        data: Any,
         position: Int,
         payloads: MutableList<Any>,
         adapter: ComponentAdapter
     ) {
-        holder.bind(itemData, position, mutableListOf(), adapter)
+        component.bind(data, position, mutableListOf(), adapter)
     }
 }

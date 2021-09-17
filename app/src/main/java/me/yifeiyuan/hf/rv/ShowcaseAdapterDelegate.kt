@@ -1,8 +1,9 @@
 package me.yifeiyuan.hf.rv
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import me.yifeiyuan.hf.rv.HFAdapter.ShowcaseComponent
+import android.widget.Toast
 import me.yifeiyuan.hf.rv.ultra.AdapterDelegate
 import me.yifeiyuan.hf.rv.ultra.Component
 import me.yifeiyuan.hf.rv.ultra.ComponentAdapter
@@ -14,7 +15,7 @@ class ShowcaseAdapterDelegate : AdapterDelegate<ShowcaseModel, ShowcaseComponent
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowcaseComponent {
         return ShowcaseComponent.newInstance(
-            LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.simple_item, parent, false)
         )
     }
 
@@ -23,13 +24,35 @@ class ShowcaseAdapterDelegate : AdapterDelegate<ShowcaseModel, ShowcaseComponent
     }
 
     override fun onBindViewHolder(
-        holder: Component<*>,
-        itemData: Any,
+        component: Component<*>,
+        data: Any,
         position: Int,
         payloads: MutableList<Any>,
         adapter: ComponentAdapter
     ) {
-        super.onBindViewHolder(holder, itemData, position, payloads, adapter)
+        super.onBindViewHolder(component, data, position, payloads, adapter)
+    }
+}
+
+class ShowcaseComponent(view: View) : Component<ShowcaseModel>(view){
+    companion object{
+        fun newInstance(view: View): ShowcaseComponent{
+            return ShowcaseComponent(view)
+        }
     }
 
+    override fun onBind(model: ShowcaseModel, position: Int, adapter: ComponentAdapter) {
+        itemView.setOnClickListener {
+            Toast.makeText(context,"onBind Clicks", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onBind(
+        model: ShowcaseModel,
+        position: Int,
+        payloads: MutableList<Any>,
+        adapter: ComponentAdapter
+    ) {
+        super.onBind(model, position, payloads, adapter)
+    }
 }
