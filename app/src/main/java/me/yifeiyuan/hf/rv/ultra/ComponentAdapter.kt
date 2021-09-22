@@ -16,9 +16,13 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
         fun registerGlobalAdapterDelegate(adapterDelegate: AdapterDelegate<*, *>) {
             Ultra.registerAdapterDelegate(adapterDelegate)
         }
+
+        fun registerGlobalAdapterHook(adapterHook: AdapterHook) {
+            Ultra.registerAdapterHook(adapterHook)
+        }
     }
 
-    val ultra: Ultra = Ultra
+//    val ultra: Ultra = Ultra
 
     private var data: MutableList<Any> = mutableListOf()
 
@@ -26,14 +30,50 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     private val adapterDelegates: MutableList<AdapterDelegate<*, *>> = mutableListOf()
 
+    //TODO 将空、异常状态放到 Adapter 真的好吗？
+//    private val emptyStatusAdapterDelegate: AdapterDelegate<*, *>? = null
+//    private val errorStatusAdapterDelegate: AdapterDelegate<*, *>? = null
+//    private var state: UltraRecyclerView.State = UltraRecyclerView.State.Empty
+
     private val viewTypeDelegateMapper: MutableMap<Int, AdapterDelegate<*, *>?> = mutableMapOf()
 
     private val hooks: MutableList<AdapterHook> = mutableListOf<AdapterHook>().apply {
         add(AdapterDelegateApm())
+        addAll(Ultra.hooks)
+    }
+
+//    TODO 真的需要吗？
+//    var onItemClickListener: ((View, Int, Any) -> Unit)? = null
+
+    private val dataObserver = object : RecyclerView.AdapterDataObserver() {
+        override fun onChanged() {
+            super.onChanged()
+            checkEmptyStatus()
+        }
+
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            super.onItemRangeInserted(positionStart, itemCount)
+            checkEmptyStatus()
+        }
+
+        override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+            super.onItemRangeRemoved(positionStart, itemCount)
+            checkEmptyStatus()
+        }
+    }
+
+    init {
+        hooks.addAll(Ultra.hooks)
+        adapterDelegates.addAll(Ultra.adapterDelegates)
+        registerAdapterDataObserver(dataObserver)
     }
 
     fun registerAdapterHook(adapterHook: AdapterHook) {
         hooks.add(adapterHook)
+    }
+
+    fun unRegisterAdapterHook(adapterHook: AdapterHook) {
+        hooks.remove(adapterHook)
     }
 
     fun registerAdapterDelegate(adapterDelegate: AdapterDelegate<*, *>) {
@@ -147,10 +187,10 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
         val delegate: AdapterDelegate<*, *>? = adapterDelegates.firstOrNull {
             it.delegate(itemData)
-        } ?: ultra.getDelegateByItemData(itemData) ?: defaultAdapterDelegate
+        } ?: defaultAdapterDelegate
 
         itemViewType = delegate?.getItemViewType(itemData, position)
-            ?: throw DelegateNotFoundException("$position , $itemData ,找不到对应的 AdapterDelegate")
+            ?: throw DelegateNotFoundException("$position , $itemData ,找不到对应的 AdapterDelegate，请注册")
 
         if (itemViewType == 0) {
             itemViewType = View.generateViewId()
@@ -161,12 +201,10 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     private fun getDelegateByComponent(component: Component<*>): AdapterDelegate<*, *> {
         return getDelegateByViewType(component.itemViewType)
-            ?: throw DelegateNotFoundException("${component} 找不到对应的 Delegate")
     }
 
     private fun getDelegateByViewType(viewType: Int): AdapterDelegate<*, *> {
-        return viewTypeDelegateMapper[viewType] ?: ultra.getDelegateByViewType(viewType)
-        ?: defaultAdapterDelegate
+        return viewTypeDelegateMapper[viewType] ?: defaultAdapterDelegate
         ?: throw DelegateNotFoundException("${viewType} 找不到对应的 Delegate")
     }
 
@@ -199,6 +237,11 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         Log.d(TAG, "onAttachedToRecyclerView() called with: recyclerView = $recyclerView")
+//        onItemClickListener?.let {
+//            recyclerView.setOnItemClickListener { v, p ->
+//                it.invoke(v, p, getItemData(p))
+//            }
+//        }
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
@@ -228,5 +271,12 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     override fun unregisterAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
         super.unregisterAdapterDataObserver(observer)
+    }
+
+    private fun checkEmptyStatus() {
+        if (itemCount == 0) {
+//            state = UltraRecyclerView.State.Empty
+//            notifyDataSetChanged()
+        }
     }
 }

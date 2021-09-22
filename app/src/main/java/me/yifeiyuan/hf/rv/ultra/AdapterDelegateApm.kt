@@ -32,7 +32,7 @@ class AdapterDelegateApm : AdapterHook {
         val cost = endTime - createStartTime
         Log.d(
             TAG,
-            "${delegate?.javaClass?.simpleName} 完成创建: component = $component，cost = $cost (毫秒)"
+            "${delegate?.javaClass?.simpleName} 完成创建: Component = $component，cost = $cost (毫秒)"
         )
     }
 

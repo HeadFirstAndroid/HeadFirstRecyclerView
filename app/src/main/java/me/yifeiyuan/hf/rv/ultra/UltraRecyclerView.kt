@@ -2,6 +2,9 @@ package me.yifeiyuan.hf.rv.ultra
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
 /**
@@ -14,8 +17,8 @@ class UltraRecyclerView : RecyclerView {
     }
 
     private var normalAdapter: ComponentAdapter? = null
-    private var errorAdapter: Adapter<ViewHolder>? = null
-    private var emptyAdapter: Adapter<ViewHolder>? = null
+    private var errorAdapter: Adapter<*>? = null
+    private var emptyAdapter: Adapter<*>? = null
 
     constructor(context: Context) : super(context) {
         init(null, 0)
@@ -41,12 +44,14 @@ class UltraRecyclerView : RecyclerView {
 
     fun setAdapters(
         normalAdapter: ComponentAdapter,
-        errorAdapter: Adapter<ViewHolder>? = null,
-        emptyAdapter: Adapter<ViewHolder>? = null
+        errorAdapter: Adapter<*>? = null,
+        emptyAdapter: Adapter<*>? = null
     ) {
         this.normalAdapter = normalAdapter
         this.errorAdapter = errorAdapter
         this.emptyAdapter = emptyAdapter
+
+        adapter = normalAdapter
     }
 
     fun switchState(newState: State) {
@@ -71,9 +76,10 @@ class UltraRecyclerView : RecyclerView {
         }
     }
 
-    sealed class State {
+  sealed class State {
         object Normal : State()
-        class Error : State()
-        class Empty : State()
+        object Error : State()
+        object Empty : State()
     }
+
 }
