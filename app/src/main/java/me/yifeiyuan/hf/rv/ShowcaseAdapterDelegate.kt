@@ -22,16 +22,7 @@ class ShowcaseAdapterDelegate : AdapterDelegate<ShowcaseModel, ShowcaseComponent
     override fun getItemViewType(model: Any, position: Int): Int {
         return R.layout.simple_item
     }
-
-    override fun onBindViewHolder(
-        component: Component<*>,
-        data: Any,
-        position: Int,
-        payloads: MutableList<Any>,
-        adapter: ComponentAdapter
-    ) {
-        super.onBindViewHolder(component, data, position, payloads, adapter)
-    }
+    
 }
 
 class ShowcaseComponent(view: View) : Component<ShowcaseModel>(view){

@@ -38,7 +38,7 @@ interface AdapterDelegate<T, VH : Component<T>> {
         component: Component<*>,
         data: Any,
         position: Int,
-        payloads: MutableList<Any>,
+        payloads: List<Any>,
         adapter: ComponentAdapter
     ) {
         component.bind(data, position, mutableListOf(), adapter)

@@ -65,4 +65,25 @@ class AdapterDelegateApm : AdapterHook {
             "${delegate?.javaClass?.simpleName} 完成绑定: position = $position, cost = $cost (毫秒)"
         )
     }
+
+    /**
+     * 创建组件的耗时阈值，超过阈值会有警告。
+     * 默认 20 毫秒
+     *
+     * @return 毫秒
+     */
+    protected fun getCreateCostThreshold(): Long {
+        return 20
+    }
+
+    /**
+     * 绑定组件的耗时阈值，超过阈值会有警告。
+     * 默认 5 毫秒
+     *
+     * @return 毫秒
+     */
+    protected fun getBindCostThreshold(): Long {
+        return 5
+    }
+
 }
