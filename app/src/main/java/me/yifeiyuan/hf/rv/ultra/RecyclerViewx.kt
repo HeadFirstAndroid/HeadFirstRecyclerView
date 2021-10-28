@@ -9,9 +9,54 @@ import androidx.recyclerview.widget.RecyclerView
  * Created by 程序亦非猿 on 2021/9/22.
  */
 
+fun RecyclerView.setOnItemLongClickListener(listener: (childView: View, position: Int) -> Unit) {
+
+    addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+
+        val gestureDetector =
+            GestureDetector(context, object : GestureDetector.OnGestureListener {
+
+                override fun onDown(e: MotionEvent?): Boolean = false
+
+                override fun onShowPress(e: MotionEvent?) {
+                }
+
+                override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                    return true
+                }
+
+                override fun onScroll(
+                    e1: MotionEvent?,
+                    e2: MotionEvent?,
+                    distanceX: Float,
+                    distanceY: Float
+                ): Boolean = false
+
+                override fun onLongPress(e: MotionEvent?) {
+                    e?.let {
+                        findChildViewUnder(e.x, e.y)?.let {
+                            listener.invoke(it, getChildAdapterPosition(it))
+                        }
+                    }
+                }
+
+                override fun onFling(
+                    e1: MotionEvent?,
+                    e2: MotionEvent?,
+                    velocityX: Float,
+                    velocityY: Float
+                ): Boolean = false
+            })
+
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            return gestureDetector.onTouchEvent(e)
+        }
+    })
+}
+
 fun RecyclerView.setOnItemClickListener(listener: (childView: View, position: Int) -> Unit) {
 
-    addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+    addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
 
         val gestureDetector =
             GestureDetector(context, object : GestureDetector.OnGestureListener {
@@ -25,6 +70,7 @@ fun RecyclerView.setOnItemClickListener(listener: (childView: View, position: In
                     e?.let {
                         findChildViewUnder(e.x, e.y)?.let {
                             listener.invoke(it, getChildAdapterPosition(it))
+                            return true
                         }
                     }
                     return false
@@ -49,14 +95,7 @@ fun RecyclerView.setOnItemClickListener(listener: (childView: View, position: In
             })
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-            gestureDetector.onTouchEvent(e)
-            return false
-        }
-
-        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
-        }
-
-        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+            return gestureDetector.onTouchEvent(e)
         }
     })
 }

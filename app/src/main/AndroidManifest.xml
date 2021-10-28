@@ -10,11 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HeadFirstRecyclerView">
         <activity android:name=".MultiStatesActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter></activity>
+        </activity>
         <activity android:name=".ultra.UltraActivity" />
         <activity
             android:name=".MainActivity2"
@@ -22,6 +18,11 @@
             android:theme="@style/Theme.HeadFirstRecyclerView.NoActionBar" />
         <activity android:name=".BaseListActivity" />
         <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

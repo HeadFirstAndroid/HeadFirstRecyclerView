@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import java.lang.NullPointerException
 
 /**
  * Created by 程序亦非猿 on 2021/6/8.
@@ -37,28 +38,26 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     private val viewTypeDelegateMapper: MutableMap<Int, AdapterDelegate<*, *>?> = mutableMapOf()
 
-    private val hooks: MutableList<AdapterHook> = mutableListOf<AdapterHook>().apply {
-        add(AdapterDelegateApm())
-        addAll(Ultra.hooks)
-    }
+    private val hooks: MutableList<AdapterHook> = mutableListOf<AdapterHook>()
 
-//    TODO 真的需要吗？
+    //    TODO 真的需要吗？
 //    var onItemClickListener: ((View, Int, Any) -> Unit)? = null
+    var onItemClickListener: OnItemClickListener? = null
 
     private val dataObserver = object : RecyclerView.AdapterDataObserver() {
         override fun onChanged() {
             super.onChanged()
-            checkEmptyStatus()
+//            checkEmptyStatus()
         }
 
         override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
             super.onItemRangeInserted(positionStart, itemCount)
-            checkEmptyStatus()
+//            checkEmptyStatus()
         }
 
         override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
             super.onItemRangeRemoved(positionStart, itemCount)
-            checkEmptyStatus()
+//            checkEmptyStatus()
         }
     }
 
@@ -94,6 +93,8 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Component<*> {
+        Log.e(TAG, "onCreateViewHolder: ", NullPointerException())
+        Log.d(TAG, "onCreateViewHolder() called with: parent = $parent, viewType = $viewType")
         val delegate = getDelegateByViewType(viewType)
         dispatchOnCreateViewHolderStart(delegate, viewType)
         val component = delegate.onCreateViewHolder(parent, viewType)
@@ -118,10 +119,13 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     }
 
     override fun getItemCount(): Int {
+        Log.e(TAG, "getItemCount: ", NullPointerException())
         return data?.size ?: 0
     }
 
     override fun onBindViewHolder(component: Component<*>, position: Int) {
+        Log.e(TAG, "onBindViewHolder: ", NullPointerException())
+        Log.d(TAG, "onBindViewHolder() called with: component = $component, position = $position")
         val delegate = getDelegateByComponent(component)
         val data = getItemData(position)
         dispatchOnBindViewHolderStart(delegate, component, data, position, mutableListOf())
@@ -140,6 +144,11 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
         position: Int,
         payloads: MutableList<Any>
     ) {
+        Log.e(TAG, "onBindViewHolder: ", NullPointerException())
+        Log.d(
+            TAG,
+            "onBindViewHolder() called with: component = $component, position = $position, payloads = $payloads"
+        )
         val delegate = getDelegateByComponent(component)
         val data = getItemData(position)
         dispatchOnBindViewHolderStart(delegate, component, data, position, payloads)
@@ -182,6 +191,8 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     }
 
     override fun getItemViewType(position: Int): Int {
+        Log.e(TAG, "getItemViewType: ", NullPointerException())
+        Log.d(TAG, "getItemViewType() called with: position = $position")
         var itemViewType: Int
         val itemData = getItemData(position)
 
@@ -209,6 +220,7 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     }
 
     override fun getItemId(position: Int): Long {
+        Log.d(TAG, "getItemId() called with: position = $position")
         val itemData = getItemData(position)
         val delegate = getDelegateByViewType(getItemViewType(position))
         return delegate.getItemId(itemData, position) ?: RecyclerView.NO_ID
@@ -226,6 +238,7 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     override fun onViewAttachedToWindow(holder: Component<*>) {
         holder.onViewAttachedToWindow(this)
+        Log.e(TAG, "onViewAttachedToWindow: ", NullPointerException(""))
         Log.d(TAG, "onViewAttachedToWindow() called with: holder = $holder")
     }
 
@@ -237,11 +250,11 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         Log.d(TAG, "onAttachedToRecyclerView() called with: recyclerView = $recyclerView")
-//        onItemClickListener?.let {
-//            recyclerView.setOnItemClickListener { v, p ->
-//                it.invoke(v, p, getItemData(p))
-//            }
-//        }
+        onItemClickListener?.let {
+            recyclerView.setOnItemClickListener { v, p ->
+                it.onItemClick(v, p, getItemData(p))
+            }
+        }
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
@@ -273,10 +286,14 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
         super.unregisterAdapterDataObserver(observer)
     }
 
-    private fun checkEmptyStatus() {
-        if (itemCount == 0) {
+//    private fun checkEmptyStatus() {
+//        if (itemCount == 0) {
 //            state = UltraRecyclerView.State.Empty
 //            notifyDataSetChanged()
-        }
+//        }
+//    }
+
+    interface OnItemClickListener {
+        fun onItemClick(v: View, p: Int, data: Any)
     }
 }

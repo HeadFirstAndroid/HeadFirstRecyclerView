@@ -8,8 +8,4 @@ class IAdapterDelegateImpl  : AdapterDelegate<Any,DefaultComponent> {
         TODO("Not yet implemented")
     }
 
-    override fun getItemViewType(model: Any, position: Int): Int {
-        TODO("Not yet implemented")
-    }
-
 }

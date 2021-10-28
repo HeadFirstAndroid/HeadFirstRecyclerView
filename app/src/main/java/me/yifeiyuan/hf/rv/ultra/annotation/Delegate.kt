@@ -5,6 +5,6 @@ package me.yifeiyuan.hf.rv.ultra.annotation
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.ANNOTATION_CLASS)
-annotation class Delegates(
+annotation class Delegate(
 
 )

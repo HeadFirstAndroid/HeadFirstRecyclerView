@@ -9,7 +9,7 @@ import android.util.Log
 class AdapterDelegateApm : AdapterHook {
 
     companion object {
-        private const val TAG = "DelegateApm"
+        private const val TAG = "AdapterDelegateApm"
     }
 
     private var createStartTime: Long = 0

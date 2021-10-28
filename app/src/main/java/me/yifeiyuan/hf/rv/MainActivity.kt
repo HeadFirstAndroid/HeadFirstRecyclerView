@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -29,6 +30,13 @@ class MainActivity : AppCompatActivity() {
             setData(mockData())
             registerAdapterDelegate(ShowcaseAdapterDelegate())
         }
+
+        adapter.onItemClickListener = object:ComponentAdapter.OnItemClickListener{
+            override fun onItemClick(v: View, p: Int, data: Any) {
+                Log.d(TAG, "onItemClick() called with: v = $v, p = $p, data = $data")
+            }
+        }
+
         recyclerView.adapter = adapter
         recyclerView.itemAnimator = HFAnimator()
 //        recyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
@@ -49,6 +57,18 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
 //        k.javaClass.genericSuperclass
+
+        //会被 adapter.onItemClickListener 优先拦截
+        recyclerView.setOnItemClickListener { childView, position ->
+            Toast.makeText(this@MainActivity, "点击了 $childView , $position", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        //长按但是点击还是会被触发。。
+//        recyclerView.setOnItemLongClickListener { childView, position ->
+//            Toast.makeText(this@MainActivity, "长按了 $childView , $position", Toast.LENGTH_SHORT)
+//                .show()
+//        }
 
         IAdapterDelegateImpl().run {
             Log.e(TAG, "onCreate:DefaultModel: ${delegate(DefaultModel())}")
