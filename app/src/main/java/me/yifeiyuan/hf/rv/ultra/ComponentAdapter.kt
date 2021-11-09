@@ -93,7 +93,7 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Component<*> {
-        Log.e(TAG, "onCreateViewHolder: ", NullPointerException())
+//        Log.e(TAG, "onCreateViewHolder: ", NullPointerException())
         Log.d(TAG, "onCreateViewHolder() called with: parent = $parent, viewType = $viewType")
         val delegate = getDelegateByViewType(viewType)
         dispatchOnCreateViewHolderStart(delegate, viewType)
@@ -119,12 +119,12 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     }
 
     override fun getItemCount(): Int {
-        Log.e(TAG, "getItemCount: ", NullPointerException())
+//        Log.e(TAG, "getItemCount: ", NullPointerException())
         return data?.size ?: 0
     }
 
     override fun onBindViewHolder(component: Component<*>, position: Int) {
-        Log.e(TAG, "onBindViewHolder: ", NullPointerException())
+//        Log.e(TAG, "onBindViewHolder: ", NullPointerException())
         Log.d(TAG, "onBindViewHolder() called with: component = $component, position = $position")
         val delegate = getDelegateByComponent(component)
         val data = getItemData(position)
@@ -144,7 +144,7 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
         position: Int,
         payloads: MutableList<Any>
     ) {
-        Log.e(TAG, "onBindViewHolder: ", NullPointerException())
+//        Log.e(TAG, "onBindViewHolder: ", NullPointerException())
         Log.d(
             TAG,
             "onBindViewHolder() called with: component = $component, position = $position, payloads = $payloads"
@@ -191,7 +191,7 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        Log.e(TAG, "getItemViewType: ", NullPointerException())
+//        Log.e(TAG, "getItemViewType: ", NullPointerException())
         Log.d(TAG, "getItemViewType() called with: position = $position")
         var itemViewType: Int
         val itemData = getItemData(position)
@@ -244,6 +244,7 @@ open class ComponentAdapter : RecyclerView.Adapter<Component<*>>() {
 
     override fun onViewDetachedFromWindow(holder: Component<*>) {
         holder.onViewDetachedFromWindow(this)
+        Log.e(TAG, "onViewDetachedFromWindow: ", NullPointerException(""))
         Log.d(TAG, "onViewDetachedFromWindow() called with: holder = $holder")
     }
 

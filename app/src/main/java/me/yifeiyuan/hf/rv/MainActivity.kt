@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
@@ -31,13 +32,19 @@ class MainActivity : AppCompatActivity() {
             registerAdapterDelegate(ShowcaseAdapterDelegate())
         }
 
+//        recyclerView.layoutManager = LinearLayoutManager(this).apply {
+//            recycleChildrenOnDetach = true
+//        }
+
         adapter.onItemClickListener = object:ComponentAdapter.OnItemClickListener{
             override fun onItemClick(v: View, p: Int, data: Any) {
                 Log.d(TAG, "onItemClick() called with: v = $v, p = $p, data = $data")
             }
         }
 
+        Log.d(TAG, "onCreate: before set Adapter ")
         recyclerView.adapter = adapter
+        Log.d(TAG, "onCreate: after set Adapter ")
         recyclerView.itemAnimator = HFAnimator()
 //        recyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
 //            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
@@ -77,6 +84,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.e(TAG, "onAttachedToWindow: ", NullPointerException())
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Log.e(TAG, "onDetachedFromWindow: ", NullPointerException())
+    }
     private fun mockData(): MutableList<Any> {
         return mutableListOf<Any>().apply{
             repeat(30){
@@ -106,5 +122,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_rv, menu)
         return true
+    }
+
+    override fun onDestroy() {
+        recyclerView.adapter = null
+        super.onDestroy()
     }
 }

@@ -2,6 +2,7 @@ package me.yifeiyuan.hf.rv.ultra
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -38,6 +39,15 @@ class UltraRecyclerView : RecyclerView {
 
     private fun init(attrs: AttributeSet?, defStyle: Int) {
 
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Log.e(TAG, "onAttachedToWindow: ", NullPointerException())
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
     }
 
     private var currentState: State = State.Normal

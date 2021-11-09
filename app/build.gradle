@@ -55,4 +55,5 @@ dependencies {
     //https://developer.android.com/topic/libraries/architecture/paging/v3-overview
     implementation "androidx.paging:paging-runtime:$paging_version"
 
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
 }
