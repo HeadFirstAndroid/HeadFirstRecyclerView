@@ -36,6 +36,10 @@ class MainActivity : AppCompatActivity() {
 //            recycleChildrenOnDetach = true
 //        }
 
+//        recyclerView.layoutManager = StaggeredGridLayoutManager(2, VERTICAL).apply {
+//
+//        }
+
         adapter.onItemClickListener = object:ComponentAdapter.OnItemClickListener{
             override fun onItemClick(v: View, p: Int, data: Any) {
                 Log.d(TAG, "onItemClick() called with: v = $v, p = $p, data = $data")
@@ -86,13 +90,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        Log.e(TAG, "onAttachedToWindow: ", NullPointerException())
+//        Log.e(TAG, "onAttachedToWindow: ", NullPointerException())
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        Log.e(TAG, "onDetachedFromWindow: ", NullPointerException())
+//        Log.e(TAG, "onDetachedFromWindow: ", NullPointerException())
     }
+
     private fun mockData(): MutableList<Any> {
         return mutableListOf<Any>().apply{
             repeat(30){
@@ -103,15 +108,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.linear -> {
-            recyclerView.layoutManager = HFLinearLayoutManager(this)
+            recyclerView.layoutManager = HFLinearLayoutManager(this).apply {
+                recycleChildrenOnDetach = true
+            }
             true
         }
         R.id.grid -> {
-            recyclerView.layoutManager = GridLayoutManager(this, 2)
+            recyclerView.layoutManager = GridLayoutManager(this, 2).apply {
+                recycleChildrenOnDetach = true
+            }
             true
         }
         R.id.stag -> {
-            recyclerView.layoutManager = StaggeredGridLayoutManager(2, VERTICAL)
+            recyclerView.layoutManager = StaggeredGridLayoutManager(2, VERTICAL).apply {
+            }
             true
         }
         else -> {
@@ -125,7 +135,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        recyclerView.adapter = null
+//        recyclerView.adapter = null
+//        recyclerView.layoutManager.removeAndRecycleAllViews()
         super.onDestroy()
     }
 }
